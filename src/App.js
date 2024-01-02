@@ -1,23 +1,21 @@
 import { useState } from 'react';
+import TodoForm from './components/TodoForm';
 import './index.css'
+import TodoList from './components/TodoList';
 
 function App() {
-  const [newItem, setNewItem] = useState('');
+ 
   const [todos, setTodos] = useState([]);
 
-  function handleSubmit(e){
-    e.preventDefault()   //prevents page refresh in the Form 
-
-
+  const addTodo = (title) => {
     setTodos(currentTodos =>{ //in order to modify the data a new function has to be passed with a new variable to hold the new array. 
       return[
         ...currentTodos, // this will give a brand new array ...
-        {id: crypto.randomUUID(), title: newItem, completed: false},
+        {id: crypto.randomUUID(), title, completed: false},
       ]
     })
-
-    setNewItem('')
   }
+  
 
   function toggleTodo(id, completed){
     setTodos(currentTodos =>{
@@ -38,30 +36,9 @@ function App() {
 
   return (
     <>
-   <form onSubmit={handleSubmit} className="new-item-form">
-      <div className="form-row">
-        <label htmlFor="item">New Item</label><br/>
-        <input value={newItem} onChange={e => setNewItem(e.target.value)} type="text" id="item"/><br/>
-        <button className='btn'>Add</button>
-      </div>
-      
-   </form>
+   <TodoForm onSubmit={addTodo}/> 
    <h1 className='header'>Todo List</h1>
-   <ul>
-    {todos.map(todo =>{
-      return(
-        <li key={todo.id}>
-        <label>
-          <input type='checkbox' checked={todo.completed} onChange={e => toggleTodo(todo.id, e.target.checked)}/>
-          {todo.title}
-        </label>
-        <button className='btn danger-delete' onClick={() => deleteTodo(todo.id)}>Delete</button>
-        {/* make sure we set a fuction to call the function deleteTodo if not it wil just delete itself.  */}
-      </li>
-      )
-    })}
-     
-   </ul>
+    <TodoList todos={todos} toggleTodo={toggleTodo} deleteTodo={deleteTodo}/>
    </>
   );
 }
